@@ -18,12 +18,36 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+function isValidDate(input){
+  return input instanceof Date && !isNaN(input.getTime());
+}
 
+function sendDate(req, res){
+  var inputdate=req.params.date;
+  if (inputdate==null){
+    res.json({null:'nothing'});
+  }
+  if (isValidDate(new Date(inputdate))){
+    inputdate=new Date(inputdate);
+    res.json({unix:inputdate.getTime(),utc:inputdate.toUTCString()});
+  }
+  else if(!isNaN(inputdate) && inputdate.length>0){
+    inputdate=new Date(inputdate*1000);
+    //inputdate=inputdate.toUTCString();
+    res.json({unix:inputdate,utc:inputdate.toUTCString()});
+  }
+  else{
+    res.json({error:'Invalid data'});
+  }
+  
+}
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+
+app.get("/api/:date?",sendDate);
 
 
 // listen for requests :)
