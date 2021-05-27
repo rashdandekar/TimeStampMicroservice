@@ -25,16 +25,17 @@ function isValidDate(input){
 function sendDate(req, res){
   var inputdate=req.params.date;
   if (inputdate==null){
-    res.json({null:'nothing'});
+    res.json({utc:(new Date()).toLocaleTimeString()});
   }
   if (isValidDate(new Date(inputdate))){
     inputdate=new Date(inputdate);
     res.json({unix:inputdate.getTime(),utc:inputdate.toUTCString()});
   }
   else if(!isNaN(inputdate) && inputdate.length>0){
-    inputdate=new Date(inputdate*1000);
+    var utcdate=new Date(parseInt(inputdate));
+
     //inputdate=inputdate.toUTCString();
-    res.json({unix:inputdate,utc:inputdate.toUTCString()});
+    res.json({unix:parseInt(inputdate),utc:utcdate.toUTCString()});
   }
   else{
     res.json({error:'Invalid data'});
